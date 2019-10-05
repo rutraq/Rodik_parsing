@@ -65,6 +65,30 @@ class Parsing(Driver):
             # self.driver.get(product)
             # self.driver.back()
 
+    def information(self, url):
+        full_info = dict()
+        name = self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#product h1")))
+        full_info['name'] = name.text[7::]
+        print(full_info['name'])
+        price = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "price_block_n")))
+        full_info['price'] = price.text
+        print(full_info['price'])
+        description = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "product_text")))
+        full_info['description'] = description.text
+        print(full_info['description'])
+        characteristic = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "xar")))
+        full_info['characteristic'] = characteristic
+        print(full_info['characteristic'])
+        r = requests.get(url)
+        tree = html.fromstring(r.content)
+        links = tree.xpath('//tbody/tr[2]/td/div[3]/text()')
+        full_info['links'] = links
+        for lin in links:
+            print(lin)
+        print(full_info['links'])
+        self.driver.close()
+        return full_info
+
 
 if __name__ == "__main__":
     info = Parsing()
