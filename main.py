@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import requests
 from lxml import html
+import os
 
 
 class Driver:
@@ -50,8 +51,13 @@ class Parsing(Driver):
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
             try:
+                new_dir = str(i)
+                os.mkdir(new_dir)
+                f = open(new_dir + '/url.txt', 'w')
+                f.write(product)
+                f.close()
                 photo = requests.get(src[0])
-                with open(str(i) + ".jpg", "wb") as out:
+                with open(new_dir + "/photo.jpg", "wb") as out:
                     out.write(photo.content)
             except requests.exceptions.InvalidSchema:
                 pass
