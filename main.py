@@ -34,10 +34,9 @@ class Parsing(Driver):
             categories = self.wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.razdel_name a")))
             del categories[0:5]
             self.driver.get(categories[i].get_attribute("href"))
-            try:
-                self.parse_one_category(self.driver.current_url)
-            except TimeoutException:
-                pass
+
+            self.parse_one_category(self.driver.current_url)
+
             self.driver.back()
             i += 1
 
@@ -46,12 +45,14 @@ class Parsing(Driver):
         tree = html.fromstring(r.content)
         products = tree.xpath('//*[@id="products"]/tbody/tr/td[3]/a[1]/@href')
         i = 1
+        print(len(products))
         for product in products:
             r = requests.get(product)
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
+            full_info = self.information(product)
             try:
-                new_dir = str(i)
+                new_dir = full_info['name']
                 os.mkdir(new_dir)
                 f = open(new_dir + '/url.txt', 'w')
                 f.write(product)
@@ -67,26 +68,22 @@ class Parsing(Driver):
 
     def information(self, url):
         full_info = dict()
-        name = self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#product h1")))
-        full_info['name'] = name.text[7::]
-        print(full_info['name'])
-        price = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "price_block_n")))
-        full_info['price'] = price.text
-        print(full_info['price'])
-        description = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "product_text")))
-        full_info['description'] = description.text
-        print(full_info['description'])
-        characteristic = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "xar")))
-        full_info['characteristic'] = characteristic
-        print(full_info['characteristic'])
-        r = requests.get(url)
-        tree = html.fromstring(r.content)
-        links = tree.xpath('//tbody/tr[2]/td/div[3]/text()')
-        full_info['links'] = links
-        for lin in links:
-            print(lin)
-        print(full_info['links'])
-        self.driver.close()
+        self.driver.get(url)
+        try:
+            name = self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#product h1")))
+            full_info['name'] = name.text[7::]
+            price = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "price_block_n")))
+            full_info['price'] = price.text
+            description = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "product_text")))
+            full_info['description'] = description.text
+            characteristic = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "xar")))
+            full_info['characteristic'] = characteristic
+            r = requests.get(url)
+            tree = html.fromstring(r.content)
+            links = tree.xpath('//tbody/tr[2]/td/div[3]/text()')
+            full_info['links'] = links
+        except TimeoutException:
+            pass
         return full_info
 
 
