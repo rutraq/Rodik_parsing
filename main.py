@@ -44,9 +44,20 @@ class Parsing(Driver):
         r = requests.get(url)
         tree = html.fromstring(r.content)
         products = tree.xpath('//*[@id="products"]/tbody/tr/td[3]/a[1]/@href')
+        i = 1
         for product in products:
-            self.driver.get(product)
-            self.driver.back()
+            r = requests.get(product)
+            tree = html.fromstring(r.content)
+            src = tree.xpath('//*[@id="show-img"]/@src')
+            try:
+                photo = requests.get(src[0])
+                with open(str(i) + ".jpg", "wb") as out:
+                    out.write(photo.content)
+            except requests.exceptions.InvalidSchema:
+                pass
+            i += 1
+            # self.driver.get(product)
+            # self.driver.back()
 
 
 if __name__ == "__main__":
