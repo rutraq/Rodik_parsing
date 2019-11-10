@@ -8,10 +8,6 @@ import requests
 from lxml import html
 import os
 import shutil
-import openpyxl
-from openpyxl.styles import Font
-from lxml import html
-from transliterate import translit
 import re
 
 
@@ -22,14 +18,14 @@ class Driver:
         load = DesiredCapabilities().FIREFOX
         load["pageLoadStrategy"] = "eager"
         self.driver = webdriver.Firefox(desired_capabilities=load,
-                                        executable_path=r"C:/Users/evgen/Desktop/geckodriver.exe",
+                                        executable_path=r"C:/Users/Lenovo/Desktop/geckodriver.exe",
                                         firefox_options=options)
 
 
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/920359/923248"
+        self.url = "http://www.tools.by/?q=kat/920359/926624"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.find_products(self.url)
@@ -41,24 +37,45 @@ class Parsing(Driver):
         tree = html.fromstring(r.content)
         products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')
         del products[0]
-        del products[0]
-        del products[0]
-        print(products)
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")
         i = 1
         for product in products:
-            self.information_excel(product, count, photo)
+            # self.information_excel(product, count, info)
             count += 1
             photo += 1
-            # r = requests.get(product)
-            # tree = html.fromstring(r.content)
-            # src = tree.xpath('//*[@id="show-img"]/@src')
-            # photo = requests.get(src[0])
-            # with open("photos/{0}.jpg".format(i), 'wb') as out:
-            #     out.write(photo.content)
-            # i += 1
+            r = requests.get(product)
+            tree = html.fromstring(r.content)
+            src = tree.xpath('//*[@id="show-img"]/@src')
+            photo = requests.get(src[0])
+            with open("photos/{0}.jpg".format(i), 'wb') as out:
+                out.write(photo.content)
+
+            more_photos = tree.xpath('//*[@id="small-img-roll"]/div[2]/img/@src')
+            if len(more_photos) != 0:
+                self.additional_photos(i, more_photos, tree)
+            i += 1
+
+    @staticmethod
+    def additional_photos(i, more_photos, tree):
+        j = 1
+        path = "http://www.tools.by/newkatfiles/products/"
+        try:
+            while True:
+                photos = re.search(r'\d+_', more_photos[0])[0]
+                src = "{0}{1}{2}.jpg".format(path, photos, j)
+                photo = requests.get(src)
+                with open("photos/{0}_{1}.jpg".format(i, j), 'wb') as out:
+                    out.write(photo.content)
+                j += 1
+                more_photos = tree.xpath('//*[@id="small-img-roll"]/div[{0}]/img/@src'.format(j + 1))
+                if len(more_photos) == 0:
+                    break
+        except IndexError:
+            pass
+        except TypeError:
+            pass
 
     def information_excel(self, url, count, photo):
         self.driver.get(url)
@@ -79,7 +96,7 @@ class Parsing(Driver):
             desc = description.text.split('\n')
             for tabulation in desc:
                 full_info['description'] += '<p>' + tabulation + '</p>'
-        except(TimeoutException):
+        except TimeoutException:
             full_info['description'] = ''
 
         page = requests.get(url)
@@ -148,7 +165,6 @@ class Parsing(Driver):
         sheet.cell(row=count, column=4).value = manufacturer
         wb.save('1.xlsx')
         print('Сохранено')
-
 
 
 if __name__ == "__main__":
