@@ -7,6 +7,7 @@ from selenium.common.exceptions import TimeoutException
 import requests
 from lxml import html
 import os
+import shutil
 
 
 class Driver:
@@ -23,20 +24,30 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/53746/1230"
+        self.url = "http://www.tools.by/?q=kat/924679"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.find_products(self.url)
 
-    def find_products(self, url):
-        r = requests.get("http://www.tools.by/?q=kat/53746/1230")
+    @staticmethod
+    def find_products(url):
+        r = requests.get(url)
         tree = html.fromstring(r.content)
-        products = tree.xpath(
-            '//*/tbody/tr/td[3]/a[1]/@href')
+        products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')
         del products[0]
         print(products)
+        if os.path.exists("photos"):
+            shutil.rmtree("photos")
+        os.mkdir("photos")
+        i = 1
         for product in products:
-            self.driver.get(product)
+            r = requests.get(product)
+            tree = html.fromstring(r.content)
+            src = tree.xpath('//*[@id="show-img"]/@src')
+            photo = requests.get(src[0])
+            with open("photos/{0}.jpg".format(i), 'wb') as out:
+                out.write(photo.content)
+            i += 1
 
     # def find_products(self):
     #     categories = self.wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.razdel_name a")))
