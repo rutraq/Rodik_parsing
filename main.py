@@ -168,6 +168,34 @@ class Parsing(Driver):
         wb.save('1.xlsx')
         print('Сохранено')
 
+    @staticmethod
+    def check_photos():
+        import os
+
+        files = os.listdir("photos")
+
+        photo_number = 1
+        photos = []  # можешь удалить после доработки
+
+        for i in range(len(files)):
+            src = "{0}.jpg".format(photo_number)
+
+            if src in files:
+                photos.append(src)  # загрузка главного фото
+            else:
+                break
+
+            j = 1
+            while True:
+                additional_src = "{0}_{1}.jpg".format(photo_number, j)
+                if additional_src in files:
+                    photos.append(additional_src)  # загрузка дополнительного фото, вставь код для additional_images
+                    j += 1
+                else:
+                    break
+
+            photo_number += 1
+
 
 if __name__ == "__main__":
     info = Parsing()
