@@ -9,6 +9,8 @@ from lxml import html
 import os
 import shutil
 import re
+from transliterate import translit
+import openpyxl
 
 
 class Driver:
@@ -86,7 +88,7 @@ class Parsing(Driver):
         try:
             price = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "price_block_n")))
             full_info['price'] = price.text[12:-5]
-        except(TimeoutException):
+        except TimeoutException:
             full_info['price'] = 0
 
         try:
