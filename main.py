@@ -17,7 +17,7 @@ class Driver:
         load = DesiredCapabilities().FIREFOX
         load["pageLoadStrategy"] = "eager"
         self.driver = webdriver.Firefox(desired_capabilities=load,
-                                        executable_path=r"C:/Users/Lenovo/Desktop/geckodriver.exe",
+                                        executable_path=r"C:/Users/evgen/Desktop/geckodriver.exe",
                                         firefox_options=options)
 
 
