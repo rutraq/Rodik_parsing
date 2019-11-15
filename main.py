@@ -27,7 +27,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/920359/923254"
+        self.url = "http://www.tools.by/?q=kat/920359/923252"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.find_products(self.url)
@@ -46,11 +46,10 @@ class Parsing(Driver):
 
         length = len(products)
         count_percents = length / 100
-        percents = 100
         clear_line = "--------------------------------------------------"
         progress_line = ""
         progress_plus = 2
-        count = 1
+        count = 0
 
         for product in products:
             # self.information_excel(product, count, info)
@@ -77,11 +76,11 @@ class Parsing(Driver):
                     progress_line += "#"
                     count += 1
                 print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
-                                                          clear_line[count:-1], i, length),
+                                                          clear_line[count:], i, length),
                       end="")
             else:
-                print("\r{0}% |{1}{2}|  {3} of {4}".format(round(i / count_percents, 1), progress_line,
-                                                           clear_line[count:-1], i, length),
+                print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
+                                                          clear_line[count:], i, length),
                       end="")
             i += 1
 
