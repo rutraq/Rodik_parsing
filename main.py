@@ -154,7 +154,6 @@ class Parsing(Driver):
         sheet.cell(row=count, column=14).value = 'catalog/bathhouse/{0}.jpg'.format(photo)
         sheet.cell(row=count, column=15).value = sheet.cell(row=count - 1, column=15).value
         sheet.cell(row=count, column=16).value = full_info['price']
-
         sheet.cell(row=count, column=17).value = sheet.cell(row=count - 1, column=17).value
         sheet.cell(row=count, column=18).value = sheet.cell(row=count - 1, column=18).value
         sheet.cell(row=count, column=19).value = sheet.cell(row=count - 1, column=19).value
