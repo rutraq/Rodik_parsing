@@ -27,14 +27,14 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/920359/926624"
+        self.url = "http://www.tools.by/?q=kat/920359/923254"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.find_products(self.url)
 
     def find_products(self, url):
-        count = 4
-        photo = 3
+        # count = 4
+        # photo = 3
         r = requests.get(url)
         tree = html.fromstring(r.content)
         products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')
@@ -43,20 +43,46 @@ class Parsing(Driver):
             shutil.rmtree("photos")
         os.mkdir("photos")
         i = 1
+
+        length = len(products)
+        count_percents = length / 100
+        percents = 100
+        clear_line = "--------------------------------------------------"
+        progress_line = ""
+        progress_plus = 2
+        count = 1
+
         for product in products:
             # self.information_excel(product, count, info)
-            count += 1
-            photo += 1
+            # count += 1
+            # photo += 1
             r = requests.get(product)
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
-            photo = requests.get(src[0])
+            try:
+                photo = requests.get(src[0])
+            except IndexError:
+                print(src)
+                break
             with open("photos/{0}.jpg".format(i), 'wb') as out:
                 out.write(photo.content)
 
             more_photos = tree.xpath('//*[@id="small-img-roll"]/div[2]/img/@src')
             if len(more_photos) != 0:
                 self.additional_photos(i, more_photos, tree)
+
+            if (i / count_percents) >= progress_plus:
+                while progress_plus <= (i / count_percents):
+                    progress_plus += 2
+                    progress_line += "#"
+                    count += 1
+                print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
+                                                          clear_line[count:-1], i, length),
+                      end="")
+            else:
+                print("\r{0}% |{1}{2}|  {3} of {4}".format(round(i / count_percents, 1), progress_line,
+                                                           clear_line[count:-1], i, length),
+                      end="")
             i += 1
 
     @staticmethod
@@ -75,9 +101,9 @@ class Parsing(Driver):
                 if len(more_photos) == 0:
                     break
         except IndexError:
-            pass
+            print(IndexError)
         except TypeError:
-            pass
+            print(TypeError)
 
     def information_excel(self, url, count, photo):
         self.driver.get(url)
