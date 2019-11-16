@@ -7,7 +7,6 @@ from selenium.common.exceptions import TimeoutException
 import requests
 from lxml import html
 import os
-import shutil
 import re
 from transliterate import translit
 import openpyxl
@@ -81,7 +80,6 @@ class Parsing(Driver):
         x = re.findall(r'<b>Страна изготовления:\W+\w+.\s+[А-Я][а-я]+', page.text)
         manufacturer = x[0]
         manufacturer = manufacturer[28::]
-
         wb = openpyxl.load_workbook(filename='1.xlsx')
         sheet = wb['Products']
         productsID = int(sheet.cell(row=count - 1, column=1).value)
@@ -105,7 +103,6 @@ class Parsing(Driver):
         sheet.cell(row=count, column=14).value = 'catalog/For_home/bath_toilet/{0}.jpg'.format(photo)
         sheet.cell(row=count, column=15).value = sheet.cell(row=count - 1, column=15).value
         sheet.cell(row=count, column=16).value = full_info['price']
-
         sheet.cell(row=count, column=17).value = sheet.cell(row=count - 1, column=17).value
         sheet.cell(row=count, column=18).value = sheet.cell(row=count - 1, column=18).value
         sheet.cell(row=count, column=19).value = sheet.cell(row=count - 1, column=19).value
@@ -118,17 +115,14 @@ class Parsing(Driver):
         sheet.cell(row=count, column=26).value = sheet.cell(row=count - 1, column=26).value
         sheet.cell(row=count, column=27).value = sheet.cell(row=count - 1, column=27).value
         sheet.cell(row=count, column=28).value = sheet.cell(row=count - 1, column=28).value
-
         sheet.cell(row=count, column=29).value = translit(
             full_info['name'].replace('"', '').replace(',', '-').replace(' ', '-').replace('--', '-'), reversed=True)
-
         try:
             sheet.cell(row=count, column=30).value = str(full_info['description'])
         except:
             sheet.cell(row=count, column=30).value = ' '
         sheet.cell(row=count, column=31).value = full_info['name']
         sheet.cell(row=count, column=32).value = full_info['name']
-
         sheet.cell(row=count, column=33).value = sheet.cell(row=count - 1, column=33).value
         sheet.cell(row=count, column=34).value = sheet.cell(row=count - 1, column=34).value
         sheet.cell(row=count, column=35).value = sheet.cell(row=count - 1, column=35).value
@@ -153,8 +147,7 @@ class Parsing(Driver):
             additional_src = "{0}_{1}.jpg".format(photo, j)
             if additional_src in files:
                 sheet = wb['AdditionalImages']
-                sheet.cell(row=dopphoto,
-                           column=1).value = productsID  # загрузка дополнительного фото, вставь код для additional_images
+                sheet.cell(row=dopphoto, column=1).value = productsID
                 sheet.cell(row=dopphoto, column=2).value = 'catalog/For_home/household/{0}'.format(additional_src)
                 sheet.cell(row=dopphoto, column=3).value = 0
                 sheet.cell(row=2, column=4).value = dopphoto
