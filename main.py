@@ -27,7 +27,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/920359/923252"
+        self.url = "http://www.tools.by/?q=kat/1237/70443"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.find_products(self.url)

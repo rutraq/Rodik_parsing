@@ -20,7 +20,14 @@ payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
            "first_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[3]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[2]/div/a/i'}
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[1]/div/a/i'}
+
+
+def get_photo_number():
+    f = open("number_photo.txt")
+    photo_number_txt = int(f.read())
+    f.close()
+    return photo_number_txt
 
 
 def check_photos():
@@ -28,7 +35,7 @@ def check_photos():
 
     global photos
     files = os.listdir(payload["dir"])
-    photo_number = 141
+    photo_number = get_photo_number()
     for i in range(len(files)):
         src = "{0}.jpg".format(photo_number)
         if src in files:
@@ -71,10 +78,15 @@ token = re.search(r'=\w+$', token)[0][1:]
 
 sleep(1)
 driver.find_element_by_xpath(payload["first_directory"]).click()
+sleep(.5)
 driver.find_element_by_xpath(payload["second_directory"]).click()
 print(len(photos))
 for photo in photos:
     driver.find_element_by_id("button-upload").click()
-    keys('C:\\1\\' + photo + '{ENTER}', with_spaces=True)
+    keys('C:\\1\\' + photo, with_spaces=True)
+    sleep(.1)
+    keys('{ENTER}')
+    with open("number_photo.txt", 'w') as f:
+        f.write(photo[:-4])
     accept()
 
