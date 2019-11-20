@@ -3,7 +3,7 @@ import re
 from selenium import webdriver
 from time import sleep
 from pywinauto.keyboard import send_keys as keys
-from selenium.common.exceptions import NoAlertPresentException
+from selenium.common.exceptions import NoAlertPresentException, StaleElementReferenceException
 
 
 def accept():
@@ -19,8 +19,8 @@ photos = []
 payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
-           "first_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[3]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[1]/div/a/i'}
+           "first_directory": '//*[@id="filemanager"]/div/div[2]/div[3]/div[4]/div/a/i',
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[2]/div/a/i'}
 
 
 def get_photo_number():
@@ -82,11 +82,15 @@ sleep(.5)
 driver.find_element_by_xpath(payload["second_directory"]).click()
 print(len(photos))
 for photo in photos:
-    driver.find_element_by_id("button-upload").click()
+    try:
+        driver.find_element_by_id("button-upload").click()
+    except StaleElementReferenceException:
+        driver.find_element_by_id("button-upload").click()
     keys('C:\\1\\' + photo, with_spaces=True)
     sleep(.1)
     keys('{ENTER}')
     with open("number_photo.txt", 'w') as f:
         f.write(photo[:-4])
     accept()
-
+driver.close()
+exit()

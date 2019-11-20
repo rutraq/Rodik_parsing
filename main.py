@@ -1,16 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import requests
 from lxml import html
 import os
 import shutil
 import re
-from transliterate import translit
-import openpyxl
+import file
 
 
 class Driver:
@@ -27,9 +23,10 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/1237/70443"
+        self.url = "http://www.tools.by/?q=kat/98083/49522"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
+        self.driver.close()
         self.find_products(self.url)
 
     def find_products(self, url):
@@ -52,9 +49,6 @@ class Parsing(Driver):
         count = 0
 
         for product in products:
-            # self.information_excel(product, count, info)
-            # count += 1
-            # photo += 1
             r = requests.get(product)
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
@@ -107,3 +101,4 @@ class Parsing(Driver):
 
 if __name__ == "__main__":
     info = Parsing()
+    file.copy_files()
