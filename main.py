@@ -23,7 +23,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/98083/49522"
+        self.url = "http://www.tools.by/?q=kat/18479/4441"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
@@ -34,8 +34,10 @@ class Parsing(Driver):
         # photo = 3
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')
-        del products[0]
+        # products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
+        # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
+        products = tree.xpath("//td/a[contains(text(),'Гвозди') or contains(text(),'Гвоздь')]/@href")  # гвоздь
+        # del products[0] # убрать если не гвоздь
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")
@@ -52,6 +54,8 @@ class Parsing(Driver):
             r = requests.get(product)
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
+            # name = tree.xpath('//*[@id="product"]/tbody/tr[1]/td/h1')
+            # check = re.search(r'Купить Очиститель', name[0].text)
             try:
                 photo = requests.get(src[0])
             except IndexError:
