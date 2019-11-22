@@ -13,5 +13,5 @@ def copy_files():
         shutil.copy("photos/" + file, "C:/1")
 
     f = open("number_photo.txt", 'w')
-    f.write("1")
+    f.write("0")
     f.close()

@@ -23,7 +23,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/18479/4441"
+        self.url = "http://www.tools.by/?q=kat/18479/1007404"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
@@ -34,10 +34,11 @@ class Parsing(Driver):
         # photo = 3
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        # products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
+        products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
-        products = tree.xpath("//td/a[contains(text(),'Гвозди') or contains(text(),'Гвоздь')]/@href")  # гвоздь
-        # del products[0] # убрать если не гвоздь
+        # products = tree.xpath(
+        #     "//td/a[contains(text(),'Дюбель') or contains(text(),'Хомут') or contains(text(), 'Шайба')]/@href")  # дюбель
+        del products[0]  # убрать если не гвоздь
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")

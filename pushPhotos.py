@@ -11,7 +11,7 @@ def accept():
         alert = driver.switch_to.alert
         alert.accept()
     except NoAlertPresentException:
-        sleep(1)
+        sleep(1.5)
         accept()
 
 
@@ -20,13 +20,14 @@ payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
            "first_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[4]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div/div/a/i'}
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[3]/div[1]/div/a/i'}
 
 
 def get_photo_number():
     f = open("number_photo.txt")
-    photo_number_txt = int(f.read())
+    photo_number_txt = f.read()
     f.close()
+    photo_number_txt = int(re.search(r'\d+$', photo_number_txt)[0]) + 1
     return photo_number_txt
 
 
@@ -57,7 +58,7 @@ def check_photos():
 #     content = session.post("https://zozo.by/admin/index.php?route=common/login", data=payload).content
 #     token = re.search(r'token=\w+"', str(content))[0]
 #     token = token[6:-1]
-#     add = session.get("https://zozo.by/admin/index.php?route=catalog/product/add&token=" + token)
+#     add = session.get("https://zozo.dby/admin/index.php?route=catalog/product/add&token=" + token)
 
 check_photos()
 driver = webdriver.Firefox(executable_path=r"C:/Users/Lenovo/Desktop/geckodriver.exe")
@@ -82,16 +83,37 @@ sleep(.5)
 driver.find_element_by_xpath(payload["second_directory"]).click()
 sleep(.5)
 print(len(photos))
+five_photos = []
+i = 0
+string = ''
+
 for photo in photos:
+    if i < 9:
+        string += '"C:\\1\\{0}" '.format(photo)
+        i += 1
+    else:
+        string += '"C:\\1\\{0}" '.format(photo)
+        string = string[:-1]
+        five_photos.append(string)
+        i = 0
+        string = ''
+
+if string != '':
+    string = string[:-1]
+    five_photos.append(string)
+    i = 0
+    string = ''
+
+for photo in five_photos:
     try:
         driver.find_element_by_id("button-upload").click()
     except StaleElementReferenceException:
         driver.find_element_by_id("button-upload").click()
-    keys('C:\\1\\' + photo, with_spaces=True)
+    keys(photo, with_spaces=True)
     sleep(.1)
     keys('{ENTER}')
     with open("number_photo.txt", 'w') as f:
-        f.write(photo[:-4])
+        f.write(photo[-12:-5])
     accept()
 driver.close()
 exit()
