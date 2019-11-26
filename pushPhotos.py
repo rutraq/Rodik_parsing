@@ -19,8 +19,8 @@ photos = []
 payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
-           "first_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[4]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[3]/div[1]/div/a/i'}
+           "first_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[3]/div/a/i',
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[3]/div/a/i'}
 
 
 def get_photo_number():
@@ -83,7 +83,7 @@ sleep(.5)
 driver.find_element_by_xpath(payload["second_directory"]).click()
 sleep(.5)
 print(len(photos))
-five_photos = []
+ten_photos = []
 i = 0
 string = ''
 
@@ -94,17 +94,17 @@ for photo in photos:
     else:
         string += '"C:\\1\\{0}" '.format(photo)
         string = string[:-1]
-        five_photos.append(string)
+        ten_photos.append(string)
         i = 0
         string = ''
 
 if string != '':
     string = string[:-1]
-    five_photos.append(string)
+    ten_photos.append(string)
     i = 0
     string = ''
 
-for photo in five_photos:
+for photo in ten_photos:
     try:
         driver.find_element_by_id("button-upload").click()
     except StaleElementReferenceException:

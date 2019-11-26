@@ -23,22 +23,20 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/18479/1007404"
+        self.url = "http://www.tools.by/?q=kat/53746/53747"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
         self.find_products(self.url)
 
     def find_products(self, url):
-        # count = 4
-        # photo = 3
         r = requests.get(url)
         tree = html.fromstring(r.content)
         products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
         # products = tree.xpath(
-        #     "//td/a[contains(text(),'Дюбель') or contains(text(),'Хомут') or contains(text(), 'Шайба')]/@href")  # дюбель
-        del products[0]  # убрать если не гвоздь
+        #     "//td/a[contains(text(),'Н') or contains(text(),'Х')]/@href")
+        del products[0]  # убрать если не адекватный или ебанутый
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")
