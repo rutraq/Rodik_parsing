@@ -35,7 +35,7 @@ class Parsing(Driver):
         # products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
         products = tree.xpath(
-            "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л') or contains(text(),'Ф') or contains(text(),'Н') or contains(text(),'з')]/@href")
+            "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л') or contains(text(),'Ф') or contains(text(),'Н') or contains(text(),'з') or contains(text(),'Л')]/@href")
         # del products[0]  # убрать если не адекватный или ебанутый
         if os.path.exists("photos"):
             shutil.rmtree("photos")

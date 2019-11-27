@@ -4,6 +4,9 @@ from selenium import webdriver
 from time import sleep
 from pywinauto.keyboard import send_keys as keys
 from selenium.common.exceptions import NoAlertPresentException, StaleElementReferenceException
+import win32clipboard as clipboard
+import win32con
+import win32com.client
 
 
 def accept():
@@ -20,7 +23,7 @@ payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
            "first_directory": '//*[@id="filemanager"]/div/div[2]/div[5]/div[1]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div/div/a/i'}
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[1]/div/a/i'}
 
 
 def get_photo_number():
@@ -29,6 +32,13 @@ def get_photo_number():
     f.close()
     photo_number_txt = int(re.search(r'\d+$', photo_number_txt)[0]) + 1
     return photo_number_txt
+
+
+def insert_into_clipboard(text):
+    clipboard.OpenClipboard()
+    clipboard.EmptyClipboard()
+    clipboard.SetClipboardData(win32con.CF_UNICODETEXT, text)
+    clipboard.CloseClipboard()
 
 
 def check_photos():
@@ -104,12 +114,16 @@ if string != '':
     i = 0
     string = ''
 
+shell = win32com.client.Dispatch('WScript.Shell')
+
 for photo in ten_photos:
     try:
         driver.find_element_by_id("button-upload").click()
     except StaleElementReferenceException:
         driver.find_element_by_id("button-upload").click()
-    keys(photo, with_spaces=True)
+    # keys(photo, with_spaces=True)
+    insert_into_clipboard(photo)
+    shell.SendKeys('^V')
     sleep(.1)
     keys('{ENTER}')
     with open("number_photo.txt", 'w') as f:
