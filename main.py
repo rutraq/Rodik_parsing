@@ -23,7 +23,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/53746/53747"
+        self.url = "http://www.tools.by/?q=kat/65/66"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
@@ -32,11 +32,11 @@ class Parsing(Driver):
     def find_products(self, url):
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
+        # products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
-        # products = tree.xpath(
-        #     "//td/a[contains(text(),'Н') or contains(text(),'Х')]/@href")
-        del products[0]  # убрать если не адекватный или ебанутый
+        products = tree.xpath(
+            "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л') or contains(text(),'Ф') or contains(text(),'Н') or contains(text(),'з')]/@href")
+        # del products[0]  # убрать если не адекватный или ебанутый
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")
@@ -53,12 +53,11 @@ class Parsing(Driver):
             r = requests.get(product)
             tree = html.fromstring(r.content)
             src = tree.xpath('//*[@id="show-img"]/@src')
-            # name = tree.xpath('//*[@id="product"]/tbody/tr[1]/td/h1')
-            # check = re.search(r'Купить Очиститель', name[0].text)
             try:
                 photo = requests.get(src[0])
             except IndexError:
                 print(src)
+                print(product)
                 break
             with open("photos/{0}.jpg".format(i), 'wb') as out:
                 out.write(photo.content)
@@ -97,9 +96,9 @@ class Parsing(Driver):
                 if len(more_photos) == 0:
                     break
         except IndexError:
-            print(IndexError)
+            print("Index")
         except TypeError:
-            print(TypeError)
+            pass
 
 
 if __name__ == "__main__":
