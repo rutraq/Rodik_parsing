@@ -8,7 +8,7 @@ def get_categories(url):
     tree = html.fromstring(r.content)
     href = tree.xpath("//div[@class='thumbnail subcategory']/a/@href")
     for h in href:
-        print(re.search('\w+$', h)[0])
+        print(re.search('[\w-]+$', h)[0])
         try:
             pages = get_pages("{0}?limit=100&page=".format(h))
             check(pages, "{0}?limit=100&page=".format(h))
