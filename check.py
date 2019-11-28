@@ -40,5 +40,5 @@ def check(pages, url):
 
 
 if __name__ == "__main__":
-    url_enter = "https://zozo.by/stroitelnye-materialy/stroitelnye-i-otdelochnye-materialy"
+    url_enter = "https://zozo.by/instrumenty-i-oborudovanie/elektroinstrumenty-bosch-bull-makita-molot-wortex-fiolent"
     get_categories(url_enter)

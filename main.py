@@ -23,7 +23,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/65/982446"
+        self.url = "http://www.tools.by/?q=kat/65/982443"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
@@ -55,30 +55,31 @@ class Parsing(Driver):
             src = tree.xpath('//*[@id="show-img"]/@src')
             try:
                 photo = requests.get(src[0])
+
+                with open("photos/{0}.jpg".format(i), 'wb') as out:
+                    out.write(photo.content)
+
+                more_photos = tree.xpath('//*[@id="small-img-roll"]/div[2]/img/@src')
+                if len(more_photos) != 0:
+                    self.additional_photos(i, more_photos, tree)
+
+                if (i / count_percents) >= progress_plus:
+                    while progress_plus <= (i / count_percents):
+                        progress_plus += 2
+                        progress_line += "#"
+                        count += 1
+                    print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
+                                                              clear_line[count:], i, length),
+                          end="")
+                else:
+                    print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
+                                                              clear_line[count:], i, length),
+                          end="")
+                i += 1
             except IndexError:
                 print(src)
                 print(product)
-                break
-            with open("photos/{0}.jpg".format(i), 'wb') as out:
-                out.write(photo.content)
-
-            more_photos = tree.xpath('//*[@id="small-img-roll"]/div[2]/img/@src')
-            if len(more_photos) != 0:
-                self.additional_photos(i, more_photos, tree)
-
-            if (i / count_percents) >= progress_plus:
-                while progress_plus <= (i / count_percents):
-                    progress_plus += 2
-                    progress_line += "#"
-                    count += 1
-                print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
-                                                          clear_line[count:], i, length),
-                      end="")
-            else:
-                print("\r{0}% |{1}{2}| {3} of {4}".format(round(i / count_percents, 1), progress_line,
-                                                          clear_line[count:], i, length),
-                      end="")
-            i += 1
+                pass
 
     @staticmethod
     def additional_photos(i, more_photos, tree):

@@ -15,3 +15,4 @@ def copy_files():
     f = open("number_photo.txt", 'w')
     f.write("0")
     f.close()
+copy_files()

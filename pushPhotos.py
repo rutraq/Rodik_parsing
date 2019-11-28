@@ -23,7 +23,7 @@ payload = {"username": "admin",
            "password": "765tgrfvc76trg",
            "dir": "C:/1",
            "first_directory": '//*[@id="filemanager"]/div/div[2]/div[5]/div[1]/div/a/i',
-           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[2]/div/a/i'}
+           "second_directory": '//*[@id="filemanager"]/div/div[2]/div[2]/div[3]/div/a/i'}
 
 
 def get_photo_number():
