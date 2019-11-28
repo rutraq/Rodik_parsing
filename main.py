@@ -23,7 +23,7 @@ class Driver:
 class Parsing(Driver):
     def __init__(self):
         super().__init__()
-        self.url = "http://www.tools.by/?q=kat/65/66"
+        self.url = "http://dom.tools.by/?q=kat/3341/3678"
         self.driver.get(self.url)
         self.wait = WebDriverWait(self.driver, 3)
         self.driver.close()
@@ -32,10 +32,10 @@ class Parsing(Driver):
     def find_products(self, url):
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        # products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
+        products = tree.xpath('//*/tbody/tr/td[3]/a[1]/@href')  # адекватный
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
-        products = tree.xpath(
-            "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л') or contains(text(),'Ф') or contains(text(),'Н') or contains(text(),'з') or contains(text(),'Л')]/@href")
+        # products = tree.xpath(
+        #     "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л')]/@href")
         # del products[0]  # убрать если не адекватный или ебанутый
         if os.path.exists("photos"):
             shutil.rmtree("photos")
