@@ -1,6 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support.ui import WebDriverWait
 import requests
 from lxml import html
 import os
@@ -9,24 +6,9 @@ import re
 import file
 
 
-class Driver:
+class Parsing:
     def __init__(self):
-        options = webdriver.FirefoxOptions()
-        options.add_argument('headless')
-        load = DesiredCapabilities().FIREFOX
-        load["pageLoadStrategy"] = "eager"
-        self.driver = webdriver.Firefox(desired_capabilities=load,
-                                        executable_path=r"C:/Users/Lenovo/Desktop/geckodriver.exe",
-                                        firefox_options=options)
-
-
-class Parsing(Driver):
-    def __init__(self):
-        super().__init__()
-        self.url = "http://www.tools.by/?q=kat/65/982443"
-        self.driver.get(self.url)
-        self.wait = WebDriverWait(self.driver, 3)
-        self.driver.close()
+        self.url = "http://www.tools.by/?q=kat/26/41"
         self.find_products(self.url)
 
     def find_products(self, url):
@@ -36,7 +18,8 @@ class Parsing(Driver):
         # products = tree.xpath('//*/td[2]/a[1]/@href')  # ебанутый
         # products = tree.xpath(
         #     "//*/tbody/tr/td[3]/a[contains(text(),'Аккум') or contains(text(),'л')]/@href")
-        del products[0]  # убрать если не адекватный или ебанутый
+        if products[0] == "http://remont.tools.by":
+            del products[0]
         if os.path.exists("photos"):
             shutil.rmtree("photos")
         os.mkdir("photos")
